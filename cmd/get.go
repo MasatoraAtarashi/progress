@@ -32,7 +32,7 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 
 	for _, repository := range config.Repositories {
 		repository_name := strings.Split(repository, "/")
-		output += repository_name[len(repository_name)-1] + "\n"
+		output += "## " + repository_name[len(repository_name)-1] + "\n"
 
 		var commits string
 		commits, err = getProgress(repository, "masatora", "2021-04-25 00:00:00")
@@ -40,13 +40,13 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 		output += "\n\n"
 	}
 
-	execLess(output)
+	fmt.Println(output)
 	return
 }
 
 // 出力にメタデータを追加
 func addMetaDate(output *string) (err error) {
-	*output += "2021-04-25\n\n"
+	*output += "# 2021-04-25\n\n"
 	return nil
 }
 
@@ -70,15 +70,8 @@ func getProgress(repository string, username string, date string) (output string
 	return
 }
 
-// lessコマンドで表示
-func execLess(str string) (err error) {
-	cmd := exec.Command("less", "-R")
-	cmd.Stdin = strings.NewReader(str)
-	cmd.Stdout = os.Stdout
-	err = cmd.Run()
-	return
-}
-
 func init() {
+	getCmd.PersistentFlags().StringP("markdown", "m", "", "Output markdown format")
+
 	rootCmd.AddCommand(getCmd)
 }
