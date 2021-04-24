@@ -24,7 +24,7 @@ bin/%: main.go deps
 
 ## build binary
 .PHONY: build
-build: bin/question
+build: bin/progress
 
 ## Show help
 .PHONY: help
