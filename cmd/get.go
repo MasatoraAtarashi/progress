@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+const layout = "2006-01-02 00:00:00"
+
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
@@ -27,17 +29,22 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 		return errors.New("リポジトリを指定してください")
 	}
 
+	date, err := getDate(cmd)
+	if err != nil {
+		return
+	}
+
 	var output string
-	err = addMetaDate(&output)
+	err = addMetaDate(&output, date)
 
 	for _, repository := range config.Repositories {
 		repository_name := strings.Split(repository, "/")
 		output += "## " + repository_name[len(repository_name)-1] + "\n"
 
 		var commits string
-		commits, err = getProgress(repository, "masatora", "2021-04-25 00:00:00")
+		commits, err = getProgress(repository, "masatora", date)
 		output += commits
-		output += "\n\n"
+		output += "\n"
 	}
 
 	fmt.Println(output)
@@ -45,14 +52,31 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 }
 
 // 出力にメタデータを追加
-func addMetaDate(output *string) (err error) {
-	*output += "# 2021-04-25\n\n"
+func addMetaDate(output *string, date string) (err error) {
+	*output += "# " + date + "\n\n"
 	return nil
+}
+
+func getDate(cmd *cobra.Command) (date string, err error) {
+	date, err = cmd.PersistentFlags().GetString("date")
+	if err != nil {
+		return
+	}
+	if date == "" {
+		//out, err := exec.Command("git", "config", "user.name").Output()
+		//if err != nil {
+		//	return :err
+		//}
+		//date = string(out)
+		date = time.Now().Format(layout)
+	} else {
+		date += " 00:00:00"
+	}
+	return
 }
 
 // 指定した日に指定したユーザが行ったコミットを表示する
 func getProgress(repository string, username string, date string) (output string, err error) {
-	layout := "2006-01-02 00:00:00"
 	start_date, err := time.Parse(layout, date)
 	end_date := start_date.AddDate(0, 0, 1)
 	cmd := exec.Command(
@@ -71,7 +95,7 @@ func getProgress(repository string, username string, date string) (output string
 }
 
 func init() {
-	getCmd.PersistentFlags().StringP("markdown", "m", "", "Output markdown format")
+	getCmd.PersistentFlags().StringP("date", "d", "", "Specify date")
 
 	rootCmd.AddCommand(getCmd)
 }
