@@ -32,7 +32,7 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 
 	for _, repository := range config.Repositories {
 		repository_name := strings.Split(repository, "/")
-		output += "##" + repository_name[len(repository_name)-1] + "\n\n"
+		output += repository_name[len(repository_name)-1] + "\n"
 
 		var commits string
 		commits, err = getProgress(repository, "masatora", "2021-04-25 00:00:00")
@@ -46,7 +46,7 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 
 // 出力にメタデータを追加
 func addMetaDate(output *string) (err error) {
-	*output += "#" + "2021-04-25\n\n"
+	*output += "2021-04-25\n\n"
 	return nil
 }
 
@@ -62,6 +62,7 @@ func getProgress(repository string, username string, date string) (output string
 		"--author=" + username,
 		"--since=" + start_date.Format(layout),
 		"--until=" + end_date.Format(layout),
+		"--format= - %C(auto)%h%Creset %s",
 	)
 	cmd.Stderr = os.Stderr
 	out, err := cmd.Output()
