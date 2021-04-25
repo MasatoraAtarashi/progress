@@ -84,7 +84,6 @@ func getProgress(repository string, username string, date string) (output string
 	cmd := exec.Command(
 		"git", "-C", repository, "log",
 		"--oneline",
-		"--reverse",
 		"--author=" + username,
 		"--since=" + start_date.Format(layout),
 		"--until=" + end_date.Format(layout),
