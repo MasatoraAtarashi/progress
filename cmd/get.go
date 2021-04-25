@@ -52,7 +52,8 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 }
 
 // 出力にメタデータを追加
-func addMetaDate(output *string, date string) (err error) {
+func addMetaDate(output *string, datetime string) (err error) {
+	date := strings.Split(datetime, " ")[0]
 	*output += "# " + date + "\n\n"
 	return nil
 }
