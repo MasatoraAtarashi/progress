@@ -34,12 +34,17 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 		return
 	}
 
+	username, err := getUserName(cmd)
+	if err != nil {
+		return
+	}
+
 	var output string
 	err = addMetaDate(&output, date)
 
 	for _, repository := range config.Repositories {
 		var commits string
-		commits, err = getProgress(repository, "masatora", date)
+		commits, err = getProgress(repository, username, date)
 		if commits != "" {
 			repository_name := strings.Split(repository, "/")
 			output += "## " + repository_name[len(repository_name)-1] + "\n"
@@ -65,14 +70,25 @@ func getDate(cmd *cobra.Command) (date string, err error) {
 		return
 	}
 	if date == "" {
-		//out, err := exec.Command("git", "config", "user.name").Output()
-		//if err != nil {
-		//	return :err
-		//}
-		//date = string(out)
 		date = time.Now().Format(layout)
 	} else {
 		date += " 00:00:00"
+	}
+	return
+}
+
+func getUserName(cmd *cobra.Command) (username string, err error) {
+	username, err = cmd.PersistentFlags().GetString("user")
+	if err != nil {
+		return
+	}
+
+	if username == "" {
+		out, err := exec.Command("git", "config", "user.name").Output()
+		if err != nil {
+			return "", err
+		}
+		username = string(out)
 	}
 	return
 }
@@ -97,6 +113,7 @@ func getProgress(repository string, username string, date string) (output string
 
 func init() {
 	getCmd.PersistentFlags().StringP("date", "d", "", "Specify date")
+	getCmd.PersistentFlags().StringP("user", "u", "", "Specify user")
 
 	rootCmd.AddCommand(getCmd)
 }
