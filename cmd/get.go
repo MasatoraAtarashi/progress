@@ -64,6 +64,7 @@ func addMetaDate(output *string, datetime string) (err error) {
 	return nil
 }
 
+// 日付を取得
 func getDate(cmd *cobra.Command) (date string, err error) {
 	date, err = cmd.PersistentFlags().GetString("date")
 	if err != nil {
@@ -77,6 +78,7 @@ func getDate(cmd *cobra.Command) (date string, err error) {
 	return
 }
 
+// usernameを取得
 func getUserName(cmd *cobra.Command) (username string, err error) {
 	username, err = cmd.PersistentFlags().GetString("user")
 	if err != nil {
