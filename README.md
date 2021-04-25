@@ -2,6 +2,7 @@ progress - 進捗取得ツール
 =======
 
 [![Apache License](http://img.shields.io/badge/license-Apache-blue.svg?style=flat)](LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/MasatoraAtarashi/progress)](https://goreportcard.com/report/github.com/MasatoraAtarashi/progress)
 
 `progress`は進捗を確認することのできるツールです。日報等に使えます。
 
