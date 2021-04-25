@@ -123,13 +123,19 @@ func getProgress(cmd *cobra.Command, repository string, username string, date st
 		cmdArgs = append(cmdArgs, "--reverse")
 	}
 
-	gitCmd := exec.Command(
-		"git", cmdArgs...,
-	)
-	gitCmd.Stderr = os.Stderr
-	out, err := gitCmd.Output()
+	// gitコマンドを実行
+	out, err := execGitCmd(cmdArgs)
 	commit.Content = string(out)
 	commit.Count = len(strings.Split(commit.Content, "\n")) - 1
+	return
+}
+
+func execGitCmd(cmdArgs []string) (out []byte, err error) {
+	cmd := exec.Command(
+		"git", cmdArgs...,
+	)
+	cmd.Stderr = os.Stderr
+	out, err = cmd.Output()
 	return
 }
 
