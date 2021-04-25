@@ -112,16 +112,6 @@ func getProgress(cmd *cobra.Command, repository string, username string, date st
 		"--author=" + username,
 		"--since=" + start_date.Format(layout),
 		"--until=" + end_date.Format(layout),
-		"--format= - %C(auto)%h%Creset %s",
-	}
-
-	// reverseオプション
-	reverse, err := cmd.PersistentFlags().GetBool("reverse")
-	if err != nil {
-		return
-	}
-	if reverse {
-		cmdArgs = append(cmdArgs, "--reverse")
 	}
 
 	// branchオプション
@@ -133,6 +123,26 @@ func getProgress(cmd *cobra.Command, repository string, username string, date st
 		cmdArgs = append(cmdArgs, branch)
 	} else {
 		cmdArgs = append(cmdArgs, "--branches")
+	}
+
+	// reverseオプション
+	reverse, err := cmd.PersistentFlags().GetBool("reverse")
+	if err != nil {
+		return
+	}
+	if reverse {
+		cmdArgs = append(cmdArgs, "--reverse")
+	}
+
+	// timeオプション
+	time, err := cmd.PersistentFlags().GetBool("time")
+	if err != nil {
+		return
+	}
+	if time {
+		cmdArgs = append(cmdArgs, "--format= - %C(auto)%h%Creset : %s %C(green)(%ad)%Creset")
+	} else {
+		cmdArgs = append(cmdArgs, "--format= - %C(auto)%h%Creset %s")
 	}
 
 	// gitコマンドを実行
@@ -156,6 +166,7 @@ func init() {
 	getCmd.PersistentFlags().StringP("user", "u", "", "Specify user")
 	getCmd.PersistentFlags().StringP("branch", "b", "", "Specify branch")
 	getCmd.PersistentFlags().BoolP("reverse", "r", false, "Reverse order of commits")
+	getCmd.PersistentFlags().BoolP("time", "t", false, "Show time")
 
 	rootCmd.AddCommand(getCmd)
 }
