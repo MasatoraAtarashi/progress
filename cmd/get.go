@@ -106,13 +106,16 @@ func getUserName(cmd *cobra.Command) (username string, err error) {
 func getProgress(repository string, username string, date string) (commit Commits, err error) {
 	start_date, err := time.Parse(layout, date)
 	end_date := start_date.AddDate(0, 0, 1)
-	cmd := exec.Command(
-		"git", "-C", repository, "log",
+	cmdArgs := []string{
+		"-C", repository, "log",
 		"--oneline",
-		"--author="+username,
-		"--since="+start_date.Format(layout),
-		"--until="+end_date.Format(layout),
+		"--author=" + username,
+		"--since=" + start_date.Format(layout),
+		"--until=" + end_date.Format(layout),
 		"--format= - %C(auto)%h%Creset %s",
+	}
+	cmd := exec.Command(
+		"git", cmdArgs...,
 	)
 	cmd.Stderr = os.Stderr
 	out, err := cmd.Output()
