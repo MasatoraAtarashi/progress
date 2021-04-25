@@ -14,6 +14,7 @@ import (
 
 const layout = "2006-01-02 00:00:00"
 
+// Commits はリポジトリごとのコミット内容とコミット数
 type Commits struct {
 	Content string
 	Count   int
@@ -53,8 +54,8 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 		var commits Commits
 		commits, err = getProgress(cmd, repository, username, date)
 		if commits.Count > 0 {
-			repository_name := strings.Split(repository, "/")
-			output += "## " + repository_name[len(repository_name)-1] + "(" + strconv.Itoa(commits.Count) + " commits)" + "\n"
+			repositoryName := strings.Split(repository, "/")
+			output += "## " + repositoryName[len(repositoryName)-1] + "(" + strconv.Itoa(commits.Count) + " commits)" + "\n"
 			output += commits.Content
 			output += "\n"
 		}
@@ -104,14 +105,14 @@ func getUserName(cmd *cobra.Command) (username string, err error) {
 
 // 指定した日に指定したユーザが行ったコミットを表示する
 func getProgress(cmd *cobra.Command, repository string, username string, date string) (commit Commits, err error) {
-	start_date, err := time.Parse(layout, date)
-	end_date := start_date.AddDate(0, 0, 1)
+	startDate, err := time.Parse(layout, date)
+	endDate := startDate.AddDate(0, 0, 1)
 	cmdArgs := []string{
 		"-C", repository, "log",
 		"--oneline",
 		"--author=" + username,
-		"--since=" + start_date.Format(layout),
-		"--until=" + end_date.Format(layout),
+		"--since=" + startDate.Format(layout),
+		"--until=" + endDate.Format(layout),
 	}
 
 	// branchオプション
