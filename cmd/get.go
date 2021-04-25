@@ -38,16 +38,17 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 	err = addMetaDate(&output, date)
 
 	for _, repository := range config.Repositories {
-		repository_name := strings.Split(repository, "/")
-		output += "## " + repository_name[len(repository_name)-1] + "\n"
-
 		var commits string
 		commits, err = getProgress(repository, "masatora", date)
-		output += commits
-		output += "\n"
+		if commits != "" {
+			repository_name := strings.Split(repository, "/")
+			output += "## " + repository_name[len(repository_name)-1] + "\n"
+			output += commits
+			output += "\n"
+		}
 	}
 
-	fmt.Println(output)
+	fmt.Printf(output)
 	return
 }
 
