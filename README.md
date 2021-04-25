@@ -25,6 +25,7 @@ $HOME/.progress.yaml
 repositories:
     #absolute path to repository you want to manage progress
     - "Users/MasatoraAtarashi/workspace/hogehoge"
+    - "Users/MasatoraAtarashi/workspace/hogehoge2"
 ```
 
 ### 進捗を取得する
