@@ -18,6 +18,8 @@ progress - 進捗取得ツール
 ## Usage
 ### 進捗を管理したいリポジトリを追加する
 $HOME配下に`/.progress.yaml`という名前のファイルを作成してください(--configオプションで任意の設定ファイルを指定することも可能)。
+
+$HOME/.progress.yaml
 ```$HOME/.progress.yaml
 repositories:
     #absolute path to repository you want to manage progress
