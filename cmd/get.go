@@ -3,14 +3,21 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/spf13/cobra"
 )
 
 const layout = "2006-01-02 00:00:00"
+
+type Commits struct {
+	Content string
+	Count   int
+}
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
@@ -43,12 +50,12 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 	err = addMetaDate(&output, date)
 
 	for _, repository := range config.Repositories {
-		var commits string
+		var commits Commits
 		commits, err = getProgress(repository, username, date)
-		if commits != "" {
+		if commits.Count > 0 {
 			repository_name := strings.Split(repository, "/")
-			output += "## " + repository_name[len(repository_name)-1] + "\n"
-			output += commits
+			output += "## " + repository_name[len(repository_name)-1] + "(" + strconv.Itoa(commits.Count) + " commits)" + "\n"
+			output += commits.Content
 			output += "\n"
 		}
 	}
@@ -96,20 +103,21 @@ func getUserName(cmd *cobra.Command) (username string, err error) {
 }
 
 // 指定した日に指定したユーザが行ったコミットを表示する
-func getProgress(repository string, username string, date string) (output string, err error) {
+func getProgress(repository string, username string, date string) (commit Commits, err error) {
 	start_date, err := time.Parse(layout, date)
 	end_date := start_date.AddDate(0, 0, 1)
 	cmd := exec.Command(
 		"git", "-C", repository, "log",
 		"--oneline",
-		"--author=" + username,
-		"--since=" + start_date.Format(layout),
-		"--until=" + end_date.Format(layout),
+		"--author="+username,
+		"--since="+start_date.Format(layout),
+		"--until="+end_date.Format(layout),
 		"--format= - %C(auto)%h%Creset %s",
 	)
 	cmd.Stderr = os.Stderr
 	out, err := cmd.Output()
-	output = string(out)
+	commit.Content = string(out)
+	commit.Count = len(strings.Split(commit.Content, "\n")) - 1
 	return
 }
 
