@@ -51,7 +51,7 @@ func runGetCmd(cmd *cobra.Command, args []string) (err error) {
 
 	for _, repository := range config.Repositories {
 		var commits Commits
-		commits, err = getProgress(repository, username, date)
+		commits, err = getProgress(cmd, repository, username, date)
 		if commits.Count > 0 {
 			repository_name := strings.Split(repository, "/")
 			output += "## " + repository_name[len(repository_name)-1] + "(" + strconv.Itoa(commits.Count) + " commits)" + "\n"
@@ -103,7 +103,7 @@ func getUserName(cmd *cobra.Command) (username string, err error) {
 }
 
 // 指定した日に指定したユーザが行ったコミットを表示する
-func getProgress(repository string, username string, date string) (commit Commits, err error) {
+func getProgress(cmd *cobra.Command, repository string, username string, date string) (commit Commits, err error) {
 	start_date, err := time.Parse(layout, date)
 	end_date := start_date.AddDate(0, 0, 1)
 	cmdArgs := []string{
@@ -114,11 +114,20 @@ func getProgress(repository string, username string, date string) (commit Commit
 		"--until=" + end_date.Format(layout),
 		"--format= - %C(auto)%h%Creset %s",
 	}
-	cmd := exec.Command(
+	// reverseオプション
+	reverse, err := cmd.PersistentFlags().GetBool("reverse")
+	if err != nil {
+		return
+	}
+	if reverse {
+		cmdArgs = append(cmdArgs, "--reverse")
+	}
+
+	gitCmd := exec.Command(
 		"git", cmdArgs...,
 	)
-	cmd.Stderr = os.Stderr
-	out, err := cmd.Output()
+	gitCmd.Stderr = os.Stderr
+	out, err := gitCmd.Output()
 	commit.Content = string(out)
 	commit.Count = len(strings.Split(commit.Content, "\n")) - 1
 	return
@@ -127,6 +136,7 @@ func getProgress(repository string, username string, date string) (commit Commit
 func init() {
 	getCmd.PersistentFlags().StringP("date", "d", "", "Specify date")
 	getCmd.PersistentFlags().StringP("user", "u", "", "Specify user")
+	getCmd.PersistentFlags().BoolP("reverse", "r", false, "Reverse order of commits")
 
 	rootCmd.AddCommand(getCmd)
 }
