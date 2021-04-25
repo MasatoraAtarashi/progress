@@ -35,14 +35,14 @@ repositories:
 ```
 # 2021-04-25
 
-## progress(3 commits)
- - af24524 Modify description of flag
- - fabf1c8 Add time option
- - fc69ade Add branch option
+## hogehoge(3 commits)
+ - af24524 commit3
+ - fabf1c8 commit2
+ - fc69ade commit1
 
-## dotfiles(2 commits)
- - ea891cb Change file structure
- - fcfce6c Add goland setting
+## hogehoge2(2 commits)
+ - ea891cb commit2
+ - fcfce6c commit1
 ```
 ## Options
 ```
