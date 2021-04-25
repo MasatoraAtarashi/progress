@@ -162,7 +162,7 @@ func execGitCmd(cmdArgs []string) (out []byte, err error) {
 }
 
 func init() {
-	getCmd.PersistentFlags().StringP("date", "d", "", "Specify date")
+	getCmd.PersistentFlags().StringP("date", "d", "", "Specify date like <2021-04-24>")
 	getCmd.PersistentFlags().StringP("user", "u", "", "Specify user")
 	getCmd.PersistentFlags().StringP("branch", "b", "", "Specify branch")
 	getCmd.PersistentFlags().BoolP("reverse", "r", false, "Reverse order of commits")
